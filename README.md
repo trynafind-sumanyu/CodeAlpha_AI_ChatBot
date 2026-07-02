@@ -2,6 +2,9 @@
 
 This repository contains **Task 2** for the CodeAlpha AI Internship: a Java FAQ chatbot that can run as a Spring Boot web API with MongoDB-backed private chat sessions for each user.
 
+## Live Link :-
+https://codealpha-ai-chatbot-ldae.onrender.com
+
 ## Features
 
 - Built with Java, Spring Boot, Spring Web, and Spring Data MongoDB.
