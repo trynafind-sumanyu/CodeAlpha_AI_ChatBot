@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CodeAlpha Java AI Chatbot</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <main class="app-shell">
+        <section class="sidebar">
+            <div class="brand">
+                <span class="brand-icon">🤖</span>
+                <div>
+                    <p class="eyebrow">CodeAlpha Internship</p>
+                    <h1>Java AI Chatbot</h1>
+                </div>
+            </div>
+
+            <form id="user-form" class="card">
+                <label for="username">Username</label>
+                <input id="username" name="username" type="text" placeholder="student01" maxlength="40" required>
+
+                <label for="display-name">Display name</label>
+                <input id="display-name" name="displayName" type="text" placeholder="Your name" maxlength="80">
+
+                <button type="submit">Start / Load User</button>
+                <p id="user-status" class="status-text">Create a user to unlock private chat sections.</p>
+            </form>
+
+            <section class="card sessions-card">
+                <div class="section-heading">
+                    <h2>Private chats</h2>
+                    <button id="new-chat-button" type="button" disabled>+ New</button>
+                </div>
+                <div id="sessions-list" class="sessions-list">
+                    <p class="empty-state">No user selected yet.</p>
+                </div>
+            </section>
+        </section>
+
+        <section class="chat-panel">
+            <header class="chat-header">
+                <div>
+                    <p class="eyebrow">MongoDB-backed conversation</p>
+                    <h2 id="active-chat-title">Select or create a chat</h2>
+                </div>
+                <span id="connection-pill" class="pill">Not connected</span>
+            </header>
+
+            <div id="chat-log" class="chat-log">
+                <article class="message bot-message">
+                    <p>Hello! Create a user, open a private chat, and ask me about CodeAlpha internship tasks, duration, certificates, or submissions.</p>
+                </article>
+            </div>
+
+            <form id="message-form" class="message-form">
+                <input id="message-input" type="text" placeholder="Ask: Do I get a certificate?" maxlength="1000" disabled required>
+                <button id="send-button" type="submit" disabled>Send</button>
+            </form>
+        </section>
+    </main>
+
+    <script src="app.js"></script>
+</body>
+</html>
