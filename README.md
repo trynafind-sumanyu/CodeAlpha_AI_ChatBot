@@ -12,6 +12,7 @@ This repository contains **Task 2** for the CodeAlpha AI Internship: a Java FAQ 
 - Uses text normalization, tokenization, bag-of-words vectors, and cosine similarity for FAQ matching.
 - Returns confidence and fallback metadata with bot answers.
 - Includes JUnit tests for the chatbot matching logic.
+- Includes a browser chat interface served from `/` with HTML, CSS, and JavaScript.
 - Ready for Render deployment with `PORT` and `MONGODB_URI` environment variables.
 
 ## Project Structure
@@ -27,6 +28,11 @@ src/main/java/com/codealpha/chatbot/
 ├── model/                                 # MongoDB user, session, and message documents
 ├── repository/                            # Spring Data MongoDB repositories
 └── service/                               # User and chat business logic
+
+src/main/resources/static/
+├── index.html                              # Browser UI layout
+├── style.css                               # Responsive dashboard styling
+└── app.js                                  # Frontend API calls and chat rendering
 
 src/test/java/com/codealpha/chatbot/
 └── FAQChatbotTest.java                    # JUnit tests for matching logic
@@ -59,6 +65,16 @@ mvn spring-boot:run
 mvn clean package
 java -jar target/ai-chatbot-0.0.1-SNAPSHOT.jar
 ```
+
+## Browser Interface
+
+After starting the app, open the chatbot UI in your browser:
+
+```text
+http://localhost:8080/
+```
+
+The page lets you create/load a user, create private chat sections, select a chat, send messages, and view saved chat history from MongoDB.
 
 ## API Endpoints
 
@@ -137,7 +153,7 @@ java -jar target/ai-chatbot-0.0.1-SNAPSHOT.jar
 
 ## Vercel Note
 
-Vercel is best for frontend/static deployments. For this Spring Boot backend, Render is the simpler option. You can still deploy a separate frontend on Vercel and connect it to this Render API URL.
+This project now includes the frontend inside Spring Boot, so Render can host both the API and the browser interface from one deployed service. Vercel is still useful if you later split the frontend into a separate React/Vite app and connect it to this Render API URL.
 
 ## Run Tests
 
