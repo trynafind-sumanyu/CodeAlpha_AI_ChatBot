@@ -1,77 +1,149 @@
-# CodeAlpha AI Internship - Java FAQ Chatbot
+# CodeAlpha AI Internship - Java Spring Boot FAQ Chatbot
 
-This repository contains **Task 2** for the CodeAlpha AI Internship: a Java-based FAQ chatbot that answers common internship questions using simple Natural Language Processing (NLP) techniques.
+This repository contains **Task 2** for the CodeAlpha AI Internship: a Java FAQ chatbot that can run as a Spring Boot web API with MongoDB-backed private chat sessions for each user.
 
 ## Features
 
-- Built fully in Java with no external dependencies.
-- Uses text normalization, tokenization, bag-of-words vectors, and cosine similarity.
-- Returns a confidence score for every matched FAQ.
-- Provides friendly fallback responses for unknown questions.
-- Includes an interactive command-line chatbot.
-- Includes a lightweight Java test runner for the core chatbot logic.
+- Built with Java, Spring Boot, Spring Web, and Spring Data MongoDB.
+- Stores users in MongoDB.
+- Creates private chat sessions per user.
+- Saves each user's dedicated chat history inside that user's chat session.
+- Prevents users from opening another user's chat by always querying sessions with both `userId` and `sessionId`.
+- Uses text normalization, tokenization, bag-of-words vectors, and cosine similarity for FAQ matching.
+- Returns confidence and fallback metadata with bot answers.
+- Includes JUnit tests for the chatbot matching logic.
+- Ready for Render deployment with `PORT` and `MONGODB_URI` environment variables.
 
 ## Project Structure
 
 ```text
 src/main/java/com/codealpha/chatbot/
-├── FAQ.java          # Immutable FAQ question/answer data model
-├── FAQChatbot.java   # Matching engine and CLI entry point
-└── MatchResult.java  # Immutable response result with confidence
+├── CodeAlphaChatbotApplication.java       # Spring Boot entry point
+├── FAQ.java                               # FAQ question/answer model
+├── FAQChatbot.java                        # FAQ matching engine and CLI-compatible main
+├── MatchResult.java                       # Bot answer result
+├── controller/                            # REST API controllers and exception handler
+├── dto/                                   # Request/response DTOs
+├── model/                                 # MongoDB user, session, and message documents
+├── repository/                            # Spring Data MongoDB repositories
+└── service/                               # User and chat business logic
 
 src/test/java/com/codealpha/chatbot/
-└── FAQChatbotTest.java # Dependency-free test runner
+└── FAQChatbotTest.java                    # JUnit tests for matching logic
 ```
 
 ## Requirements
 
-- Java Development Kit (JDK) 11 or newer
+- Java Development Kit (JDK) 17 or newer
+- Maven 3.9+
+- MongoDB Atlas connection string or local MongoDB
 
-Check your Java version:
+## Environment Variables
 
-```bash
-java -version
-javac -version
-```
+| Variable | Purpose | Example |
+| --- | --- | --- |
+| `PORT` | Web server port. Render sets this automatically. | `8080` |
+| `MONGODB_URI` | MongoDB connection string. | `mongodb+srv://user:pass@cluster.mongodb.net/codealpha_chatbot` |
 
-## Compile the Project
+If `MONGODB_URI` is not set, the app defaults to `mongodb://localhost:27017/codealpha_chatbot`.
 
-```bash
-mkdir -p out
-javac -d out $(find src/main/java -name "*.java")
-```
-
-## Run the Chatbot
+## Run Locally
 
 ```bash
-java -cp out com.codealpha.chatbot.FAQChatbot
+mvn spring-boot:run
 ```
 
-Example questions you can ask:
+## Build for Deployment
 
-- `What is CodeAlpha?`
-- `How long is the internship?`
-- `Do I get a certificate?`
-- `How do I submit my tasks?`
+```bash
+mvn clean package
+java -jar target/ai-chatbot-0.0.1-SNAPSHOT.jar
+```
 
-Type `exit`, `quit`, or `bye` to close the chatbot.
+## API Endpoints
+
+### Create or Reuse a User
+
+```http
+POST /api/users
+Content-Type: application/json
+
+{
+  "username": "student01",
+  "displayName": "Student One"
+}
+```
+
+### Create a Private Chat Session for a User
+
+```http
+POST /api/users/{userId}/chats
+Content-Type: application/json
+
+{
+  "title": "Internship FAQ Help"
+}
+```
+
+### List Only That User's Chat Sessions
+
+```http
+GET /api/users/{userId}/chats
+```
+
+### Open One Private Chat Session
+
+```http
+GET /api/users/{userId}/chats/{sessionId}
+```
+
+### Send a Message and Store User + Bot Messages
+
+```http
+POST /api/users/{userId}/chats/{sessionId}/messages
+Content-Type: application/json
+
+{
+  "message": "Do I get a certificate?"
+}
+```
+
+The response includes the updated session, answer, confidence score, and fallback flag.
+
+## MongoDB Collections
+
+- `users`: stores user profiles.
+- `chat_sessions`: stores a `userId`, title, timestamps, and the dedicated messages for that user's session.
+
+## Render Deployment
+
+1. Push this repository to GitHub.
+2. Create a MongoDB Atlas database and copy the connection string.
+3. Create a new Render Web Service from the GitHub repository.
+4. Set the build command:
+
+```bash
+mvn clean package
+```
+
+5. Set the start command:
+
+```bash
+java -jar target/ai-chatbot-0.0.1-SNAPSHOT.jar
+```
+
+6. Add the `MONGODB_URI` environment variable in Render.
+7. Deploy and use your Render URL as the live project link.
+
+## Vercel Note
+
+Vercel is best for frontend/static deployments. For this Spring Boot backend, Render is the simpler option. You can still deploy a separate frontend on Vercel and connect it to this Render API URL.
 
 ## Run Tests
 
 ```bash
-mkdir -p out
-javac -d out $(find src/main/java src/test/java -name "*.java")
-java -cp out com.codealpha.chatbot.FAQChatbotTest
+mvn test
 ```
-
-## How It Works
-
-1. The chatbot stores a list of predefined internship FAQs.
-2. User input and FAQ questions are normalized to lowercase words.
-3. Each question is converted into a bag-of-words frequency vector.
-4. Cosine similarity compares the user question with every FAQ question.
-5. The best match is returned if its score is above the confidence threshold.
-6. If the score is too low, the chatbot returns a fallback response.
 
 ## Customize FAQs
 
